@@ -1,0 +1,3 @@
+import type { Skill, SkillStatus } from "@/types";
+const labels: Record<SkillStatus, string> = { mastered: "習得済み", practicing: "練習中", wish: "習得したい" }; const colors: Record<SkillStatus, string> = { mastered: "bg-emerald-50 text-emerald-700", practicing: "bg-sky-50 text-sky-700", wish: "bg-violet-50 text-violet-700" };
+export function SkillBadge({ skill, showStatus = false }: { skill: Skill; showStatus?: boolean }) { return <span className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-semibold ${showStatus && skill.status ? colors[skill.status] : "bg-slate-100 text-slate-700"}`}>{skill.apparatus} · {skill.name}{showStatus && skill.status ? ` · ${labels[skill.status]}` : ""}</span>; }

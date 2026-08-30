@@ -1,0 +1,2 @@
+import type { User } from "@/types";
+export function Avatar({ user, size = "md" }: { user: User; size?: "sm" | "md" | "lg" }) { const sizes = { sm: "h-9 w-9 text-sm", md: "h-11 w-11 text-base", lg: "h-20 w-20 text-2xl" }; return <div aria-label={`${user.name}のプロフィール画像`} className={`${sizes[size]} flex shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-sky-500 to-indigo-600 font-bold text-white shadow-sm`}>{user.avatar}</div>; }
