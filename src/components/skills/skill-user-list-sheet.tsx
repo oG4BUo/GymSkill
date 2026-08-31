@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { Avatar } from "@/components/ui/avatar";
 import type { User } from "@/types";
 
@@ -37,7 +38,11 @@ export function SkillUserListSheet({
         <div className="px-4 py-2">
           {users.length ? (
             users.map((user) => (
-              <div key={user.id} className="flex items-center gap-3 border-b border-slate-50 py-3 last:border-0">
+              <Link
+                key={user.id}
+                href={`/users/${user.id}`}
+                className="flex items-center gap-3 border-b border-slate-50 py-3 last:border-0 active:bg-slate-50"
+              >
                 <Avatar user={user} size="sm" />
                 <div className="min-w-0">
                   <p className="truncate text-sm font-bold text-slate-900">{user.name}</p>
@@ -45,7 +50,7 @@ export function SkillUserListSheet({
                     @{user.handle} · {user.country}
                   </p>
                 </div>
-              </div>
+              </Link>
             ))
           ) : (
             <p className="py-6 text-center text-sm text-slate-400">まだ登録している選手がいません。</p>
