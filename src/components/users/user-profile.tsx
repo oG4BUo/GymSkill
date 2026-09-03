@@ -1,13 +1,18 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { sampleUsers } from "@/data/mock-data";
 import { useApp } from "@/components/providers/app-provider";
 import { Avatar } from "@/components/ui/avatar";
 import { SkillCard } from "@/components/skills/skill-card";
 import { PostCard } from "@/components/posts/post-card";
+import { FollowButton } from "@/components/users/follow-button";
+import { FollowListSheet } from "@/components/users/follow-list-sheet";
+import { getFollowers, getFollowing } from "@/lib/follow-stats";
 import type { SkillStatus } from "@/types";
+
+type FollowSheetKind = "followers" | "following" | null;
 
 const statuses: { value: SkillStatus; label: string; icon: string; iconPanel: string }[] = [
   { value: "mastered", label: "習得済み", icon: "✓", iconPanel: "bg-emerald-500" },
@@ -18,8 +23,11 @@ const statuses: { value: SkillStatus; label: string; icon: string; iconPanel: st
 export function UserProfile({ id }: { id: string }) {
   const router = useRouter();
   const user = sampleUsers.find((item) => item.id === id);
-  const { posts } = useApp();
+  const { posts, follows } = useApp();
   const userPosts = useMemo(() => posts.filter((post) => post.author.id === id), [posts, id]);
+  const [followSheet, setFollowSheet] = useState<FollowSheetKind>(null);
+  const followers = useMemo(() => getFollowers(id, follows, sampleUsers), [follows, id]);
+  const following = useMemo(() => getFollowing(id, follows, sampleUsers), [follows, id]);
 
   if (!user) {
     return (
@@ -52,7 +60,7 @@ export function UserProfile({ id }: { id: string }) {
           </div>
         </div>
         <p className="mt-4 text-sm leading-6 text-slate-700">{user.bio}</p>
-        <div className="mt-5 flex gap-6 border-y border-slate-100 py-3">
+        <div className="mt-5 flex items-center gap-6 border-y border-slate-100 py-3">
           <div>
             <p className="font-bold">{userPosts.length}</p>
             <p className="text-xs text-slate-400">投稿</p>
@@ -61,6 +69,17 @@ export function UserProfile({ id }: { id: string }) {
             <p className="font-bold">{user.skills.length}</p>
             <p className="text-xs text-slate-400">登録した技</p>
           </div>
+          <button type="button" onClick={() => setFollowSheet("followers")} className="text-left">
+            <p className="font-bold">{followers.length}</p>
+            <p className="text-xs text-slate-400">フォロワー</p>
+          </button>
+          <button type="button" onClick={() => setFollowSheet("following")} className="text-left">
+            <p className="font-bold">{following.length}</p>
+            <p className="text-xs text-slate-400">フォロー中</p>
+          </button>
+        </div>
+        <div className="mt-4">
+          <FollowButton userId={user.id} />
         </div>
       </section>
 
@@ -107,6 +126,13 @@ export function UserProfile({ id }: { id: string }) {
           <p className="px-4 py-6 text-center text-sm text-slate-400">まだ投稿がありません。</p>
         )}
       </section>
+
+      <FollowListSheet
+        open={followSheet !== null}
+        title={followSheet === "followers" ? `${user.name}のフォロワー` : `${user.name}のフォロー中`}
+        users={followSheet === "followers" ? followers : following}
+        onClose={() => setFollowSheet(null)}
+      />
     </>
   );
 }
