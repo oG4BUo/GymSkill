@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { sampleUsers } from "@/data/mock-data";
 import { useApp } from "@/components/providers/app-provider";
@@ -104,7 +105,9 @@ export function UserProfile({ id }: { id: string }) {
                 </div>
                 <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
                   {skills.map((skill) => (
-                    <SkillCard key={skill.id} skill={skill} />
+                    <Link key={skill.id} href={`/skills/${skill.id}`} className="block">
+                      <SkillCard skill={skill} />
+                    </Link>
                   ))}
                 </div>
               </div>
