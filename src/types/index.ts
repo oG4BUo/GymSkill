@@ -15,4 +15,6 @@ export type User = { id: string; name: string; handle: string; avatar: string; c
 export type Comment = { id: string; author: User; body: string; createdAt: string };
 export type Post = { id: string; author: User; skill: Skill; body: string; createdAt: string; likes: number; comments: Comment[]; videoLabel?: string };
 /** フォロー関係。userIdの組み合わせのみを持つ中間テーブル形式（Supabaseのfollowsテーブルにそのまま対応させるための設計） */
-export type Follow = { followerId: string; followingId: string };
+export type Follow = { followerId: string; followingId: string; createdAt?: string };
+/** いいね関係。誰がどの投稿にいいねしたかを表す中間テーブル形式（通知機能のためのみに使用し、Post.likesの数値カウントとは独立して管理する） */
+export type Like = { userId: string; postId: string; createdAt: string };

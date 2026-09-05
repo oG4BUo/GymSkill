@@ -1,0 +1,66 @@
+import type { Follow, Like, Post, User } from "@/types";
+
+export type Notification = {
+  id: string;
+  type: "follow" | "like" | "comment";
+  actor: User;
+  createdAt: string;
+  /** like/commentの場合のみ。タップ時の遷移先投稿ID */
+  postId?: string;
+};
+
+/**
+ * 現在のフォロー関係・いいね関係・投稿のコメントから、自分（currentUserId）宛の通知一覧を導出する。
+ * 通知専用の状態は持たず、既存データからその都度計算する読み取り専用のビュー。
+ */
+export function getNotifications({
+  currentUserId,
+  follows,
+  likes,
+  posts,
+  users,
+}: {
+  currentUserId: string;
+  follows: Follow[];
+  likes: Like[];
+  posts: Post[];
+  users: User[];
+}): Notification[] {
+  const findUser = (id: string) => users.find((user) => user.id === id);
+
+  const followNotifications: Notification[] = follows
+    .filter((follow) => follow.followingId === currentUserId && follow.followerId !== currentUserId)
+    .map((follow): Notification | null => {
+      const actor = findUser(follow.followerId);
+      return actor
+        ? { id: `follow-${follow.followerId}-${follow.followingId}`, type: "follow", actor, createdAt: follow.createdAt ?? "" }
+        : null;
+    })
+    .filter((notification): notification is Notification => notification !== null);
+
+  const likeNotifications: Notification[] = likes
+    .filter((like) => posts.find((post) => post.id === like.postId)?.author.id === currentUserId)
+    .map((like): Notification | null => {
+      const actor = findUser(like.userId);
+      return actor
+        ? { id: `like-${like.userId}-${like.postId}`, type: "like", actor, createdAt: like.createdAt, postId: like.postId }
+        : null;
+    })
+    .filter((notification): notification is Notification => notification !== null);
+
+  const commentNotifications: Notification[] = posts
+    .filter((post) => post.author.id === currentUserId)
+    .flatMap((post) =>
+      post.comments
+        .filter((comment) => comment.author.id !== currentUserId)
+        .map((comment) => ({
+          id: `comment-${comment.id}`,
+          type: "comment" as const,
+          actor: comment.author,
+          createdAt: comment.createdAt,
+          postId: post.id,
+        })),
+    );
+
+  return [...followNotifications, ...likeNotifications, ...commentNotifications];
+}
