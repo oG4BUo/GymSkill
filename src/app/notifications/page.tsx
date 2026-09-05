@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { initialLikes, sampleUsers } from "@/data/mock-data";
+import { sampleUsers } from "@/data/mock-data";
 import { useApp } from "@/components/providers/app-provider";
 import { getNotifications, type Notification } from "@/lib/notification-stats";
 
@@ -14,8 +14,8 @@ const notificationStyle: Record<Notification["type"], { icon: string; color: str
 };
 
 export default function NotificationsPage() {
-  const { posts, follows } = useApp();
-  const notifications = getNotifications({ currentUserId, follows, likes: initialLikes, posts, users: sampleUsers });
+  const { posts, follows, likes } = useApp();
+  const notifications = getNotifications({ currentUserId, follows, likes, posts, users: sampleUsers });
 
   return (
     <>

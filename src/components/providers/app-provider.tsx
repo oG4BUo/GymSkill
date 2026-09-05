@@ -1,9 +1,9 @@
 "use client";
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
-import { currentUser, initialFollows, initialPosts, skillCatalog } from "@/data/mock-data";
+import { currentUser, initialFollows, initialLikes, initialPosts, skillCatalog } from "@/data/mock-data";
 import { readLocal, writeLocal } from "@/services/browser-storage";
-import type { Comment, Follow, Post, Skill, SkillStatus } from "@/types";
-type AppContextValue = { posts: Post[]; mySkills: Skill[]; likedPostIds: string[]; follows: Follow[]; followingUserIds: string[]; toggleLike: (postId: string) => void; addComment: (postId: string, body: string) => void; addPost: (skill: Skill, body: string, videoLabel?: string) => void; updateSkillStatus: (skill: Skill, status: SkillStatus | "none") => void; toggleFollow: (userId: string) => void };
+import type { Comment, Follow, Like, Post, Skill, SkillStatus } from "@/types";
+type AppContextValue = { posts: Post[]; mySkills: Skill[]; likedPostIds: string[]; follows: Follow[]; followingUserIds: string[]; likes: Like[]; toggleLike: (postId: string) => void; addComment: (postId: string, body: string) => void; addPost: (skill: Skill, body: string, videoLabel?: string) => void; updateSkillStatus: (skill: Skill, status: SkillStatus | "none") => void; toggleFollow: (userId: string) => void };
 const AppContext = createContext<AppContextValue | null>(null); const storageKey = "gymskill-v1";
 const defaultFollowingUserIds = initialFollows.filter((follow) => follow.followerId === currentUser.id).map((follow) => follow.followingId);
 export function AppProvider({ children }: { children: React.ReactNode }) {
@@ -16,6 +16,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const updateSkillStatus = (skill: Skill, status: SkillStatus | "none") => setMySkills((items) => { if (status === "none") return items.filter((item) => item.id !== skill.id); const found = items.some((item) => item.id === skill.id); return found ? items.map((item) => item.id === skill.id ? { ...item, status } : item) : [...items, { ...skill, status }]; });
   const toggleFollow = (userId: string) => { if (userId === currentUser.id) return; setFollowingUserIds((items) => items.includes(userId) ? items.filter((id) => id !== userId) : [...items, userId]); };
   const follows = useMemo<Follow[]>(() => [...initialFollows.filter((follow) => follow.followerId !== currentUser.id), ...followingUserIds.map((userId) => ({ followerId: currentUser.id, followingId: userId }))], [followingUserIds]);
-  return <AppContext.Provider value={{ posts, mySkills, likedPostIds, follows, followingUserIds, toggleLike, addComment, addPost, updateSkillStatus, toggleFollow }}>{children}</AppContext.Provider>;
+  const likes = useMemo<Like[]>(() => [...initialLikes.filter((like) => like.userId !== currentUser.id), ...likedPostIds.map((postId) => ({ userId: currentUser.id, postId, createdAt: "たった今" }))], [likedPostIds]);
+  return <AppContext.Provider value={{ posts, mySkills, likedPostIds, follows, followingUserIds, likes, toggleLike, addComment, addPost, updateSkillStatus, toggleFollow }}>{children}</AppContext.Provider>;
 }
 export function useApp() { const context = useContext(AppContext); if (!context) throw new Error("useApp must be used within AppProvider"); return context; }

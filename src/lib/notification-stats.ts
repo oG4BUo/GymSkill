@@ -39,7 +39,7 @@ export function getNotifications({
     .filter((notification): notification is Notification => notification !== null);
 
   const likeNotifications: Notification[] = likes
-    .filter((like) => posts.find((post) => post.id === like.postId)?.author.id === currentUserId)
+    .filter((like) => like.userId !== currentUserId && posts.find((post) => post.id === like.postId)?.author.id === currentUserId)
     .map((like): Notification | null => {
       const actor = findUser(like.userId);
       return actor
