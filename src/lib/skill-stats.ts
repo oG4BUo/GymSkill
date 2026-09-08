@@ -5,7 +5,7 @@ import type { Skill, SkillStatus, User } from "@/types";
  * 将来Supabase等に移行する際は、この関数の中身だけをクエリ呼び出しに差し替えれば良い。
  */
 export function getUsersBySkillStatus(skillId: Skill["id"], status: SkillStatus, users: User[]): User[] {
-  return users.filter((user) => user.skills.some((skill) => skill.id === skillId && skill.status === status));
+  return users.filter((user) => user.skills.some((entry) => entry.skillId === skillId && entry.status === status));
 }
 
 /**

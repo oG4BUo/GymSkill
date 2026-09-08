@@ -43,7 +43,7 @@ export function SkillDetail({ id }: { id: string }) {
   const theme = apparatusTheme[skill.apparatus];
   const practicingUsers = getUsersBySkillStatus(skill.id, "practicing", sampleUsers);
   const wishUsers = getUsersBySkillStatus(skill.id, "wish", sampleUsers);
-  const relatedPosts = posts.filter((post) => post.skill.id === skill.id);
+  const relatedPosts = posts.filter((post) => post.skillId === skill.id);
 
   return (
     <>

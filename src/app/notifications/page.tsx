@@ -1,11 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { sampleUsers } from "@/data/mock-data";
 import { useApp } from "@/components/providers/app-provider";
 import { getNotifications, type Notification } from "@/lib/notification-stats";
-
-const currentUserId = "me";
+import { formatRelativeTime } from "@/lib/format-relative-time";
 
 const notificationStyle: Record<Notification["type"], { icon: string; color: string; text: (name: string) => string }> = {
   follow: { icon: "★", color: "text-violet-500 bg-violet-50", text: (name) => `${name}さんがあなたをフォローしました` },
@@ -14,8 +12,8 @@ const notificationStyle: Record<Notification["type"], { icon: string; color: str
 };
 
 export default function NotificationsPage() {
-  const { posts, follows, likes } = useApp();
-  const notifications = getNotifications({ currentUserId, follows, likes, posts, users: sampleUsers });
+  const { currentUser, users, posts, follows, likes } = useApp();
+  const notifications = getNotifications({ currentUserId: currentUser.id, follows, likes, posts, users });
 
   return (
     <>
@@ -38,7 +36,7 @@ export default function NotificationsPage() {
                 </div>
                 <div>
                   <p className="text-sm leading-5 text-slate-700">{style.text(notification.actor.name)}</p>
-                  <p className="mt-1 text-xs text-slate-400">{notification.createdAt}</p>
+                  <p className="mt-1 text-xs text-slate-400">{formatRelativeTime(notification.createdAt)}</p>
                 </div>
               </Link>
             );

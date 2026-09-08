@@ -29,7 +29,7 @@ export default function SearchPage() {
     if (!normalized) return [] as User[];
     const byId = new Map<string, User>();
     sampleUsers.forEach((user) => {
-      const matchesSkill = user.skills.some((skill) => skillIds.has(skill.id));
+      const matchesSkill = user.skills.some((entry) => skillIds.has(entry.skillId));
       const matchesProfile = user.name.toLowerCase().includes(normalized) || user.handle.toLowerCase().includes(handleQuery);
       if (matchesSkill || matchesProfile) byId.set(user.id, user);
     });
@@ -41,7 +41,7 @@ export default function SearchPage() {
     if (!normalized) return [] as Post[];
     const byId = new Map<string, Post>();
     posts.forEach((post) => {
-      const matchesSkill = skillIds.has(post.skill.id);
+      const matchesSkill = skillIds.has(post.skillId);
       const matchesBody = post.body.toLowerCase().includes(normalized);
       if (matchesSkill || matchesBody) byId.set(post.id, post);
     });

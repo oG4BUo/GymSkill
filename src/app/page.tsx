@@ -7,7 +7,7 @@ type FeedTab = "forYou" | "following";
 export default function Home() {
   const { posts, followingUserIds } = useApp();
   const [tab, setTab] = useState<FeedTab>("forYou");
-  const followingPosts = posts.filter((post) => followingUserIds.includes(post.author.id));
+  const followingPosts = posts.filter((post) => followingUserIds.includes(post.authorId));
   const visiblePosts = tab === "forYou" ? posts : followingPosts;
 
   return (

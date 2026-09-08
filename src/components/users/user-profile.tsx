@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { sampleUsers } from "@/data/mock-data";
+import { sampleUsers, skillCatalog } from "@/data/mock-data";
 import { useApp } from "@/components/providers/app-provider";
 import { Avatar } from "@/components/ui/avatar";
 import { SkillCard } from "@/components/skills/skill-card";
@@ -11,6 +11,7 @@ import { PostCard } from "@/components/posts/post-card";
 import { FollowButton } from "@/components/users/follow-button";
 import { FollowListSheet } from "@/components/users/follow-list-sheet";
 import { getFollowers, getFollowing } from "@/lib/follow-stats";
+import { getSkillById } from "@/lib/skill-directory";
 import type { SkillStatus } from "@/types";
 
 type FollowSheetKind = "followers" | "following" | null;
@@ -25,7 +26,7 @@ export function UserProfile({ id }: { id: string }) {
   const router = useRouter();
   const user = sampleUsers.find((item) => item.id === id);
   const { posts, follows } = useApp();
-  const userPosts = useMemo(() => posts.filter((post) => post.author.id === id), [posts, id]);
+  const userPosts = useMemo(() => posts.filter((post) => post.authorId === id), [posts, id]);
   const [followSheet, setFollowSheet] = useState<FollowSheetKind>(null);
   const followers = useMemo(() => getFollowers(id, follows, sampleUsers), [follows, id]);
   const following = useMemo(() => getFollowing(id, follows, sampleUsers), [follows, id]);
@@ -88,8 +89,8 @@ export function UserProfile({ id }: { id: string }) {
         <h2 className="mb-4 font-bold">マイスキル</h2>
         <div className="space-y-5">
           {statuses.map((status) => {
-            const skills = user.skills.filter((skill) => skill.status === status.value);
-            if (!skills.length) return null;
+            const entries = user.skills.filter((entry) => entry.status === status.value);
+            if (!entries.length) return null;
             return (
               <div key={status.value}>
                 <div className="mb-2 flex items-center gap-2">
@@ -100,15 +101,19 @@ export function UserProfile({ id }: { id: string }) {
                   </span>
                   <p className="text-xs font-bold text-slate-400">
                     {status.label}
-                    <span className="ml-2 text-slate-400">{skills.length}</span>
+                    <span className="ml-2 text-slate-400">{entries.length}</span>
                   </p>
                 </div>
                 <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
-                  {skills.map((skill) => (
-                    <Link key={skill.id} href={`/skills/${skill.id}`} className="block">
-                      <SkillCard skill={skill} />
-                    </Link>
-                  ))}
+                  {entries.map((entry) => {
+                    const skill = getSkillById(entry.skillId, skillCatalog);
+                    if (!skill) return null;
+                    return (
+                      <Link key={entry.skillId} href={`/skills/${entry.skillId}`} className="block">
+                        <SkillCard skill={skill} />
+                      </Link>
+                    );
+                  })}
                 </div>
               </div>
             );
