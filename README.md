@@ -62,5 +62,4 @@ Node.js 20以上を使用してください。
 pnpm install
 pnpm dev
 起動後、ブラウザで以下を開いてください。
-
-
+http://localhost:3000
