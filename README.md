@@ -44,9 +44,23 @@
 
 Node.js 20以上を使用してください。
 
+## アプリ画面
+
+### ホーム
+
+![GymSkill ホーム画面](./public/screenshots/home.png)
+
+### 検索
+
+![GymSkill 検索画面](./public/screenshots/search.png)
+
+### プロフィール
+
+![GymSkill プロフィール画面](./public/screenshots/profile.png)
+
 ```bash
 pnpm install
 pnpm dev
 起動後、ブラウザで以下を開いてください。
 
-http://localhost:3000
+
