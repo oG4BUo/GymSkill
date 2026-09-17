@@ -1,14 +1,26 @@
 "use client";
-import { useState } from "react";
+import { useMemo, useState } from "react";
+import { skillCatalog } from "@/data/mock-data";
 import { PostCard } from "@/components/posts/post-card"; import { useApp } from "@/components/providers/app-provider";
+import { getGenderPriority } from "@/lib/gender-personalization";
+import { getSkillById } from "@/lib/skill-directory";
 
 type FeedTab = "forYou" | "following";
 
 export default function Home() {
-  const { posts, followingUserIds } = useApp();
+  const { currentUser, posts, followingUserIds } = useApp();
   const [tab, setTab] = useState<FeedTab>("forYou");
   const followingPosts = posts.filter((post) => followingUserIds.includes(post.authorId));
-  const visiblePosts = tab === "forYou" ? posts : followingPosts;
+  const recommendedPosts = useMemo(() => {
+    return [...posts].sort((a, b) => {
+      const skillA = getSkillById(a.skillId, skillCatalog);
+      const skillB = getSkillById(b.skillId, skillCatalog);
+      const priorityA = getGenderPriority(currentUser.gender, skillA?.gender ?? "both");
+      const priorityB = getGenderPriority(currentUser.gender, skillB?.gender ?? "both");
+      return priorityA - priorityB;
+    });
+  }, [posts, currentUser.gender]);
+  const visiblePosts = tab === "forYou" ? recommendedPosts : followingPosts;
 
   return (
     <>

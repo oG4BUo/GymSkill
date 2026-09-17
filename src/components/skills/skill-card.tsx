@@ -1,11 +1,16 @@
-import type { Skill, SkillDifficulty } from "@/types";
+import type { Apparatus, Skill, SkillDifficulty } from "@/types";
 
 const difficultyLabel: Record<SkillDifficulty, string> = { beginner: "初級", intermediate: "中級", advanced: "上級", elite: "超上級" };
-const apparatusTheme = {
+const apparatusTheme: Record<Apparatus, { icon: string; background: string; accent: string }> = {
   "ゆか": { icon: "⌁", background: "from-sky-500 to-indigo-600", accent: "text-sky-700 bg-sky-50" },
   "跳馬": { icon: "⌃", background: "from-amber-500 to-orange-600", accent: "text-amber-700 bg-amber-50" },
+  "あん馬": { icon: "⊙", background: "from-rose-500 to-pink-600", accent: "text-rose-700 bg-rose-50" },
+  "つり輪": { icon: "◯", background: "from-violet-500 to-purple-600", accent: "text-violet-700 bg-violet-50" },
+  "平行棒": { icon: "≡", background: "from-cyan-500 to-sky-700", accent: "text-cyan-700 bg-cyan-50" },
   "鉄棒": { icon: "⊹", background: "from-emerald-500 to-teal-600", accent: "text-emerald-700 bg-emerald-50" },
-} as const;
+  "段違い平行棒": { icon: "⋕", background: "from-fuchsia-500 to-pink-700", accent: "text-fuchsia-700 bg-fuchsia-50" },
+  "平均台": { icon: "─", background: "from-lime-500 to-green-600", accent: "text-lime-700 bg-lime-50" },
+};
 
 export function SkillCard({ skill }: { skill: Skill }) {
   const theme = apparatusTheme[skill.apparatus];
