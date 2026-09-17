@@ -23,4 +23,24 @@ pnpm dev
 
 ## データ保存
 
-投稿、コメント、いいね、登録技は `localStorage` の `gymskill-v1` キーに保存されます。ブラウザのサイトデータを削除すると初期状態へ戻ります。
+投稿、コメント、いいね、登録技などのデータは、ブラウザの `localStorage` に保存されます。
+
+現在はバックエンドを使用していないため、ブラウザのサイトデータを削除すると初期状態に戻ります。
+
+## 開発環境
+
+Node.js 20以上を使用してください。
+
+## アプリ画面
+
+### ホーム
+
+![GymSkill ホーム画面](./public/screenshots/home.png)
+
+### 検索
+
+![GymSkill 検索画面](./public/screenshots/search.png)
+
+### プロフィール
+
+![GymSkill プロフィール画面](./public/screenshots/profile.png)
